@@ -1,0 +1,30 @@
+name: Update spec file
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: version without release
+        type: string
+      release:
+        required: true
+        description: release
+        type: string
+      relnotes:
+        required: true
+        description: release notes from rockstor-core
+        type: string
+jobs:
+  update-spec-file:
+    name: Update Rockstor spec file
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Create release on rockstor/rockstor-jslibs
+        id: create-jslibs-release
+        run: |
+          gh release create ${{ inputs.version }} \
+          --notes "Tagging for next rockstor-core release." \
+          --title "${{ inputs.version }}" \
+          -R FroggyFlox/testrepo-dep1
