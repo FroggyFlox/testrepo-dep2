@@ -18,13 +18,59 @@ jobs:
   update-spec-file:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    env:
+#      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Create release on rockstor/rockstor-jslibs
-        id: create-jslibs-release
+      - name: Checkout rockstor/rockstor-rpmbuild
+        id: checkout-rpmbuild
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            rockstor.spec
+          sparse-checkout-cone-mode: false
+      - name: Create new branch
+        id: create-branch
         run: |
-          gh release create ${{ inputs.version }} \
-          --notes "Tagging for next rockstor-core release." \
-          --title "${{ inputs.version }}" \
-          -R FroggyFlox/testrepo-dep1
+          git checkout -b ${{ inputs.version }}-${{ inputs.release }}_release
+      - name: Set timestamp variable
+        id: set_timestamp-var
+        run: |
+          echo 'TIMESTAMP='$(date +'%a %b %d %Y') >> $GITHUB_ENV
+      - name: edit spec file
+        id: edit-spec-file
+        env:
+          AUTHOR: "John Doe"
+          EMAIL: "email@example.com"
+        run: |
+          sed -i "s/Version: .*/Version: ${{ inputs.version }}/g" rockstor.spec
+          sed -i "s/Release: .*/Release: ${{ inputs.release }}/g" rockstor.spec
+          sed -i "s/%define jslibs_version .*/%define jslibs_version ${{ inputs.version }}/g" rockstor.spec
+          echo ${{ inputs.relnotes }} > release_notes.txt
+          echo "* $TIMESTAMP $AUTHOR <$EMAIL> - $VERSION-$RELEASE" | \
+          cat - $RELEASE_NOTES_FILENAME > \
+          changelog_snippet.txt
+          cat changelog_snippet.txt
+          sed -i '/%changelog/r changelog_snippet.txt' rockstor.spec
+          #date > generated.txt
+          #git config user.name github-actions
+          #git config user.email github-actions@github.com
+          #git add .
+          #git commit -m "generated"
+          #git push
+      - name: Commit changes
+        id: commit-changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add rockstor.spec
+          git commit -m "Update rockstor.spec for ${{ inputs.version }}-${{ inputs.release }} release"
+      - name: Push changes
+        id: push-changes
+        run: |
+          git push -u origin ${{ inputs.version }}-${{ inputs.release }}_release
+      - name: Create a pull request
+        id: create-pull-request
+        run: |
+          gh pr create \
+          --title "${{ inputs.version }}-${{ inputs.release }} Version-Release plus Changelog update"\
+          --body "Automated pull request for the ${{ inputs.version }}-${{ inputs.release }} Version-Release"
