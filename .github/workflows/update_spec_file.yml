@@ -68,7 +68,7 @@ jobs:
           sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
           sed 's|by @|@|g' | \
           sed 's|* |-|g' | \
-          tac >> release_notes.txt
+          tac > release_notes.txt
       - name: edit spec file
         id: edit-spec-file
         env:
