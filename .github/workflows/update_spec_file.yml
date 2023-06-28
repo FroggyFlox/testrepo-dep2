@@ -40,6 +40,7 @@ jobs:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
     needs: set-vars
+    permissions: write-all
     env:
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
