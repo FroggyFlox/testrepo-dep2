@@ -70,9 +70,8 @@ jobs:
           sed -i "s/Release: .*/Release: ${{ inputs.release }}/g" rockstor.spec
           sed -i "s/%define jslibs_version .*/%define jslibs_version ${{ inputs.version }}/g" rockstor.spec
           echo $RELNOTES > release_notes.txt
-          echo "* $TIMESTAMP $AUTHOR <$EMAIL> - $VERSION-$RELEASE" | \
-          cat - $RELEASE_NOTES_FILENAME > \
-          changelog_snippet.txt
+          echo "* $TIMESTAMP $AUTHOR <$EMAIL> - ${{ inputs.version }}-${{ inputs.release }}" | \
+          cat - release_notes.txt > changelog_snippet.txt
           cat changelog_snippet.txt
           sed -i '/%changelog/r changelog_snippet.txt' rockstor.spec
           #date > generated.txt
@@ -96,5 +95,5 @@ jobs:
         id: create-pull-request
         run: |
           gh pr create \
-          --title "${{ inputs.version }}-${{ inputs.release }} Version-Release plus Changelog update"\
+          --title "${{ inputs.version }}-${{ inputs.release }} Version-Release plus Changelog update" \
           --body "Automated pull request for the ${{ inputs.version }}-${{ inputs.release }} Version-Release"
