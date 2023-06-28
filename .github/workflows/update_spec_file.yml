@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: GitHubSecurityLab/actions-permissions/monitor@v1
         with:
-          config: { "create_artifact": true, "enabled": true, "debug": false }
+          config: ${{ vars.PERMISSIONS_CONFIG }}
       - name: Checkout rockstor/rockstor-rpmbuild
         id: checkout-rpmbuild
         uses: actions/checkout@v3
