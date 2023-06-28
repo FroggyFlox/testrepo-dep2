@@ -10,10 +10,10 @@ on:
         required: true
         description: release
         type: string
-      relnotes:
-        required: true
-        description: release notes from rockstor-core
-        type: string
+#      relnotes:
+#        required: true
+#        description: release notes from rockstor-core
+#        type: string
 jobs:
   set-vars:
     name: Get release notes
