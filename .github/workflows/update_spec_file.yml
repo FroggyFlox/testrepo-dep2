@@ -14,13 +14,11 @@ jobs:
   update-spec-file:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
     env:
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
-        with:
-          config: ${{ vars.PERMISSIONS_CONFIG }}
       - name: Checkout rockstor/rockstor-rpmbuild
         id: checkout-rpmbuild
         uses: actions/checkout@v3
