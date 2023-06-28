@@ -15,27 +15,27 @@ on:
 #        description: release notes from rockstor-core
 #        type: string
 jobs:
-  set-vars:
-    name: Get release notes
-    runs-on: ubuntu-latest
-    outputs:
-      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Set Release Notes
-        id: set-relnotes
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
-          gh release view ${{ inputs.version }}-${{ inputs.release }} \
-          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
-          grep '^\* ' | \
-          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
-          sed 's|by @|@|g' | \
-          sed 's|* |-|g' | \
-          tac >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
+#  set-vars:
+#    name: Get release notes
+#    runs-on: ubuntu-latest
+#    outputs:
+#      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
+#    env:
+#      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    steps:
+#      - name: Set Release Notes
+#        id: set-relnotes
+#        run: |
+#          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+#          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
+#          gh release view ${{ inputs.version }}-${{ inputs.release }} \
+#          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+#          grep '^\* ' | \
+#          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+#          sed 's|by @|@|g' | \
+#          sed 's|* |-|g' | \
+#          tac >> "$GITHUB_OUTPUT"
+#          echo "$EOF" >> "$GITHUB_OUTPUT"
   update-spec-file:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
@@ -59,27 +59,31 @@ jobs:
         id: set_timestamp-var
         run: |
           echo 'TIMESTAMP='$(date +'%a %b %d %Y') >> $GITHUB_ENV
+      - name: Get release notes
+        id: get-relnotes
+        run: |
+          gh release view ${{ inputs.version }}-${{ inputs.release }} \
+          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+          grep '^\* ' | \
+          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+          sed 's|by @|@|g' | \
+          sed 's|* |-|g' | \
+          tac >> release_notes.txt
       - name: edit spec file
         id: edit-spec-file
         env:
           AUTHOR: "John Doe"
           EMAIL: "email@example.com"
-          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+#          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
         run: |
           sed -i "s/Version: .*/Version: ${{ inputs.version }}/g" rockstor.spec
           sed -i "s/Release: .*/Release: ${{ inputs.release }}/g" rockstor.spec
           sed -i "s/%define jslibs_version .*/%define jslibs_version ${{ inputs.version }}/g" rockstor.spec
-          echo $RELNOTES > release_notes.txt
+#          echo $RELNOTES > release_notes.txt
           echo "* $TIMESTAMP $AUTHOR <$EMAIL> - ${{ inputs.version }}-${{ inputs.release }}" | \
           cat - release_notes.txt > changelog_snippet.txt
           cat changelog_snippet.txt
           sed -i '/%changelog/r changelog_snippet.txt' rockstor.spec
-          #date > generated.txt
-          #git config user.name github-actions
-          #git config user.email github-actions@github.com
-          #git add .
-          #git commit -m "generated"
-          #git push
       - name: Commit changes
         id: commit-changes
         run: |
