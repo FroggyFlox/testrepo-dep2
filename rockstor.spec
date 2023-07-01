@@ -3,7 +3,7 @@ Version: 4.5.0
 Release: 1
 Summary: Btrfs Network Attached Storage (NAS) Appliance.
 Group: Productivity/Networking/File-Sharing
-
+# This is the testing branch
 %define jslibs_version 4.5.0
 # Enable source fetch - when default disabled, source dir is /usr/src/packages/SOURCES
 %undefine _disable_source_fetch
