@@ -18,8 +18,8 @@ jobs:
   update-spec-file:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
-    permissions: write-all
-#      contents: write
+    permissions:
+      contents: write
 #      pull-requests: write
     env:
 #      GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
@@ -78,6 +78,8 @@ jobs:
           git push -u origin ${{ inputs.version }}-${{ inputs.release }}_release
       - name: Create a pull request
         id: create-pull-request
+        env:
+          GH_TOKEN: ${{ secrets.GH_DEP2_TOKEN }}
         run: |
           gh pr create \
           --base ${{ inputs.target_branch }} \
