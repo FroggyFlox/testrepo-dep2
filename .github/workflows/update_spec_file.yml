@@ -18,9 +18,9 @@ jobs:
   update-spec-file:
     name: Update Rockstor spec file
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
+    permissions: write-all
+#      contents: write
+#      pull-requests: write
     env:
 #      GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
