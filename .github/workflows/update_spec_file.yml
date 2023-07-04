@@ -28,7 +28,6 @@ jobs:
         id: checkout-rpmbuild
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ inputs.target_branch }}
           sparse-checkout: |
             rockstor.spec
@@ -67,8 +66,8 @@ jobs:
       - name: Commit changes
         id: commit-changes
         run: |
-          #git config user.name github-actions
-          #git config user.email github-actions@github.com
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add rockstor.spec
           git commit -m "Update rockstor.spec for ${{ inputs.version }}-${{ inputs.release }} release"
       - name: Push changes
