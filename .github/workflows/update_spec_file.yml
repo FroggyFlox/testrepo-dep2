@@ -28,6 +28,7 @@ jobs:
         id: checkout-rpmbuild
         uses: actions/checkout@v3
         with:
+          token: ${GH_TOKEN}
           ref: ${{ inputs.target_branch }}
           sparse-checkout: |
             rockstor.spec
