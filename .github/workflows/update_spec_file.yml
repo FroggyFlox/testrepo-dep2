@@ -66,8 +66,8 @@ jobs:
       - name: Commit changes
         id: commit-changes
         run: |
-#          git config user.name github-actions
-#          git config user.email github-actions@github.com
+          #git config user.name github-actions
+          #git config user.email github-actions@github.com
           git add rockstor.spec
           git commit -m "Update rockstor.spec for ${{ inputs.version }}-${{ inputs.release }} release"
       - name: Push changes
