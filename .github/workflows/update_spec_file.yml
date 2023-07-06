@@ -56,7 +56,7 @@ jobs:
           sed -i "s/Version: .*/Version: ${{ inputs.version }}/g" rockstor.spec
           sed -i "s/Release: .*/Release: ${{ inputs.release }}/g" rockstor.spec
           sed -i "s/%define jslibs_version .*/%define jslibs_version ${{ inputs.version }}/g" rockstor.spec
-          echo "* $TIMESTAMP ${{ env.RPM_AUTHOR }} <${{ env.RPM_EMAIL }}> - ${{ inputs.version }}-${{ inputs.release }}" | \
+          echo "* $TIMESTAMP ${{ vars.RPM_AUTHOR }} <${{ vars.RPM_EMAIL }}> - ${{ inputs.version }}-${{ inputs.release }}" | \
           cat - release_notes.txt > changelog_snippet.txt
           cat changelog_snippet.txt
           sed -i '/%changelog/r changelog_snippet.txt' rockstor.spec
